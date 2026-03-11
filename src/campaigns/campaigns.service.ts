@@ -1,4 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Campaign, CampaignDocument } from './schemas/campaign.schema';
+import { Model } from 'mongoose';
+import { CreateCampaignDto } from './dto/create-campaign.dto'
 
 @Injectable()
-export class CampaignsService {}
+export class CampaignsService {
+  constructor(
+    @InjectModel(Campaign.name) private campaignModel: Model<CampaignDocument>,
+  ) {}
+
+  async create(data: CreateCampaignDto) {
+    const campaign = new this.campaignModel({
+      ...data,
+      impressionsServed: 0,
+      status: 'active',
+    });
+    return campaign.save();
+  }
+}
